@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { billiardBooking } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
@@ -56,7 +57,7 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-        <Text style={styles.backText}>←</Text>
+        <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
       </TouchableOpacity>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Text style={styles.title}>Booking Billiard</Text>

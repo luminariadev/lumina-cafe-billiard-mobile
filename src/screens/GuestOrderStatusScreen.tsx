@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { getPaymentStatus } from "../lib/api";
 import { Colors } from "../lib/theme";
 
@@ -38,9 +39,11 @@ export default function GuestOrderStatusScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.icon}>
-          {status === "dibayar" ? "✅" : status === "batal" ? "❌" : "⏳"}
-        </Text>
+        <MaterialIcons
+          name={status === "dibayar" ? "check-circle" : status === "batal" ? "cancel" : "hourglass-empty"}
+          size={64}
+          color={status === "dibayar" ? Colors.primary : status === "batal" ? "#ef4444" : Colors.onSurfaceVariant}
+        />
         <Text style={styles.title}>
           {status === "dibayar"
             ? "Pembayaran Berhasil"

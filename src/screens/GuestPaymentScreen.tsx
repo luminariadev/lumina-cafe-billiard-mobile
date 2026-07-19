@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { getPaymentStatus } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
@@ -48,7 +49,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.successBox}>
-          <Text style={styles.successIcon}>✅</Text>
+          <MaterialIcons name="check-circle" size={64} color={Colors.primary} />
           <Text style={styles.successTitle}>Pembayaran Berhasil!</Text>
           <Text style={styles.successSub}>{transaksi.kode_transaksi}</Text>
           {type === "billiard" && (
@@ -68,8 +69,9 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <TouchableOpacity onPress={() => navigation.navigate("Home")} style={styles.backBtn}>
-        <Text style={styles.backText}>← Batal</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+        <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
+        <Text style={styles.backText}> Batal</Text>
       </TouchableOpacity>
 
       <View style={styles.content}>
@@ -79,8 +81,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
         <View style={styles.qrBox}>
           <Text style={styles.qrLabel}>Scan QRIS untuk bayar</Text>
           <View style={styles.qrFrame}>
-            <Text style={styles.qrPlaceholder}>🌐</Text>
-            <Text style={styles.qrCode}>{transaksi.qris_string}</Text>
+            <MaterialIcons name="qr-code" size={80} color="#000" />
           </View>
           <Text style={styles.qrHint}>
             Scan kode di atas menggunakan{'\n'}aplikasi mobile banking / e-wallet
@@ -152,7 +153,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
             }
           }}
         >
-          <Text style={styles.mockBtnText}>💰 Simulasi Bayar</Text>
+          <Text style={styles.mockBtnText}> Simulasi Bayar</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -161,7 +162,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
-  backBtn: { paddingHorizontal: 16, paddingTop: 16 },
+  backBtn: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingTop: 16 },
   backText: { color: Colors.primary, fontSize: 18 },
   content: { flex: 1, padding: 16 },
   title: {

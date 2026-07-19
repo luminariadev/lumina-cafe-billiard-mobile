@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { cafeOrder } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
@@ -70,10 +71,10 @@ export default function GuestCartScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 8 }}>
-          <Text style={styles.backText}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
         </TouchableOpacity>
-        <Text style={styles.title}>🛒 Keranjang</Text>
+        <Text style={styles.title}>Keranjang</Text>
         <Text style={styles.subtitle}>{cartItems.length} item</Text>
       </View>
 

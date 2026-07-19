@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { getProducts, Product } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
@@ -41,8 +43,8 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
     <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 8 }}>
-          <Text style={styles.backText}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.title}>Brew Selection</Text>
         <Text style={styles.subtitle}>
@@ -69,9 +71,11 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
                 activeOpacity={0.8}
               >
                 <View style={styles.cafeImage}>
-                  <Text style={styles.emoji}>
-                    {item.product_type === "minuman" ? "☕" : "🍽️"}
-                  </Text>
+                  {item.product_type === "minuman" ? (
+                    <Ionicons name="cafe-outline" size={36} color={Colors.onSurfaceVariant} />
+                  ) : (
+                    <MaterialIcons name="restaurant" size={36} color={Colors.onSurfaceVariant} />
+                  )}
                 </View>
                 <View style={styles.productInfo}>
                   <Text style={styles.productName} numberOfLines={1}>

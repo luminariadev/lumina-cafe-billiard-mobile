@@ -9,6 +9,8 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { getMejas, getProducts, Meja, Product } from "../lib/api";
 import { Colors, Fonts, Styles } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
@@ -38,8 +40,6 @@ export default function GuestHomeScreen({ navigation }: any) {
 
   const cafeItems = products.slice(0, 10);
 
-  // ─────────────────────────────────────────────────
-  // Navigator helpers
   function goToTableBooking(meja: Meja) {
     navigation.navigate("BookingForm", { meja });
   }
@@ -52,8 +52,6 @@ export default function GuestHomeScreen({ navigation }: any) {
     navigation.navigate("CafeMenu");
   }
 
-  // ─────────────────────────────────────────────────
-  // Render
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -66,9 +64,18 @@ export default function GuestHomeScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* ── STICKY HEADER ── */}
+      {/* ── HEADER ── */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Cue & Brew</Text>
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.notifBtn}>
+            <MaterialIcons name="notifications" size={22} color={Colors.onSurfaceVariant} />
+            <View style={styles.notifDot} />
+          </TouchableOpacity>
+          <View style={styles.avatar}>
+            <MaterialIcons name="person" size={22} color={Colors.onSurfaceVariant} />
+          </View>
+        </View>
       </View>
 
       <ScrollView
@@ -84,13 +91,13 @@ export default function GuestHomeScreen({ navigation }: any) {
 
         {/* ── PROMO BANNER ── */}
         <View style={[styles.promoCard, Styles.electricGlow]}>
-          <View style={styles.promoOverlay} />
+          <View style={styles.promoGradientOverlay} />
           <View style={styles.promoContent}>
             <View style={styles.promoBadge}>
               <Text style={styles.promoBadgeText}>Limited Offer</Text>
             </View>
             <Text style={styles.promoTitle}>
-              20% Off Billiards{'\n'}Before 4:00 PM
+              20% Off Billiards{"\n"}Before 4:00 PM
             </Text>
             <Text style={styles.promoSub}>Valid Mon - Thu • Book Now</Text>
           </View>
@@ -100,7 +107,7 @@ export default function GuestHomeScreen({ navigation }: any) {
         <View style={styles.statsRow}>
           <View style={[styles.statCard, Styles.electricGlow]}>
             <View style={styles.statHeader}>
-              <Text style={styles.statIcon}>🎱</Text>
+              <MaterialIcons name="sports-bar" size={18} color={Colors.primary} />
               <Text style={styles.statLabel}>Active Tables</Text>
             </View>
             <Text style={styles.statValue}>
@@ -109,8 +116,8 @@ export default function GuestHomeScreen({ navigation }: any) {
           </View>
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
-              <Text style={styles.statIcon}>☕</Text>
-              <Text style={styles.statLabel}>Cafe Orders</Text>
+              <Ionicons name="cafe-outline" size={18} color={Colors.secondary} />
+              <Text style={[styles.statLabel, { color: Colors.secondary }]}>Cafe Orders</Text>
             </View>
             <Text style={styles.statValue}>~15 min</Text>
           </View>
@@ -128,15 +135,11 @@ export default function GuestHomeScreen({ navigation }: any) {
             {mejas.slice(0, 6).map((m) => {
               const isAvailable = m.status === "tersedia";
               const isOccupied = m.status === "terpakai";
-              const borderColor = isOccupied
-                ? Colors.outlineVariant
-                : Colors.primary;
+              const borderColor = isOccupied ? Colors.outlineVariant : Colors.primary;
               const bgColor = isOccupied
                 ? Colors.surfaceContainerHigh
                 : "rgba(107,251,154,0.2)";
-              const textColor = isOccupied
-                ? Colors.onSurfaceVariant
-                : Colors.primary;
+              const textColor = isOccupied ? Colors.onSurfaceVariant : Colors.primary;
               const label = isOccupied ? "Occupied" : "Available";
               return (
                 <TouchableOpacity
@@ -173,13 +176,8 @@ export default function GuestHomeScreen({ navigation }: any) {
             })}
           </View>
           <View style={styles.bookingActions}>
-            <Text style={styles.priceLabel}>
-              Rp 25.000 / jam
-            </Text>
-            <TouchableOpacity
-              style={styles.confirmBtn}
-              onPress={goToMejaPicking}
-            >
+            <Text style={styles.priceLabel}>Rp 25.000 / jam</Text>
+            <TouchableOpacity style={styles.confirmBtn} onPress={goToMejaPicking}>
               <Text style={styles.confirmBtnText}>Confirm Booking</Text>
             </TouchableOpacity>
           </View>
@@ -189,9 +187,7 @@ export default function GuestHomeScreen({ navigation }: any) {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Brew Selection</Text>
           <TouchableOpacity onPress={goToCafeMenu}>
-            <Text style={[styles.sectionAction, { color: Colors.secondary }]}>
-              Full Menu
-            </Text>
+            <Text style={[styles.sectionAction, { color: Colors.secondary }]}>Full Menu</Text>
           </TouchableOpacity>
         </View>
         <ScrollView
@@ -202,6 +198,7 @@ export default function GuestHomeScreen({ navigation }: any) {
         >
           {cafeItems.length === 0 && (
             <View style={styles.cafePlaceholder}>
+              <MaterialIcons name="local-cafe" size={32} color={Colors.onSurfaceVariant} />
               <Text style={styles.cafePlaceholderText}>Menu belum tersedia</Text>
             </View>
           )}
@@ -213,9 +210,11 @@ export default function GuestHomeScreen({ navigation }: any) {
               activeOpacity={0.8}
             >
               <View style={styles.cafeImage}>
-                <Text style={styles.cafeEmoji}>
-                  {item.product_type === "minuman" ? "☕" : "🍽️"}
-                </Text>
+                {item.product_type === "minuman" ? (
+                  <Ionicons name="cafe-outline" size={36} color={Colors.onSurfaceVariant} />
+                ) : (
+                  <MaterialIcons name="restaurant" size={36} color={Colors.onSurfaceVariant} />
+                )}
               </View>
               <View style={styles.cafeInfo}>
                 <Text style={styles.cafeName} numberOfLines={1}>
@@ -224,7 +223,7 @@ export default function GuestHomeScreen({ navigation }: any) {
                 <View style={styles.cafeBottom}>
                   <Text style={styles.cafePrice}>{formatCurrency(item.price)}</Text>
                   <TouchableOpacity style={styles.addBtn} onPress={goToCafeMenu}>
-                    <Text style={styles.addBtnText}>+</Text>
+                    <MaterialIcons name="add" size={16} color={Colors.onSecondary} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -251,7 +250,7 @@ export default function GuestHomeScreen({ navigation }: any) {
               </View>
               <Text style={styles.sessionTime}>18:30 - 20:30 (2 Hours)</Text>
             </View>
-            <Text style={styles.sessionArrow}>›</Text>
+            <MaterialIcons name="chevron-right" size={22} color={Colors.onSurfaceVariant} />
           </View>
         </TouchableOpacity>
         <View style={[styles.sessionCard, styles.sessionPast]}>
@@ -270,56 +269,57 @@ export default function GuestHomeScreen({ navigation }: any) {
             </View>
             <Text style={styles.sessionTime}>19:00 - 21:00 (2 Hours)</Text>
           </View>
-          <Text style={styles.sessionArrow}>↻</Text>
+          <MaterialIcons name="history" size={22} color={Colors.onSurfaceVariant} />
         </View>
       </ScrollView>
 
       {/* ── BOTTOM NAV ── */}
       <View style={styles.bottomNav}>
-        {[
-          { key: "home", icon: "🏠", label: "Home", onPress: () => {} },
-          {
-            key: "book",
-            icon: "📋",
-            label: "Book",
-            onPress: goToMejaPicking,
-          },
-          {
-            key: "cafe",
-            icon: "☕",
-            label: "Cafe",
-            onPress: goToCafeMenu,
-          },
-        ].map((tab) => {
-          const isActive = activeTab === tab.key;
-          return (
-            <TouchableOpacity
-              key={tab.key}
-              style={[styles.tab, isActive && styles.tabActive]}
-              onPress={() => {
-                setActiveTab(tab.key as BottomTab);
-                tab.onPress();
-              }}
-            >
-              <Text
-                style={[
-                  styles.tabIcon,
-                  isActive && styles.tabIconActive,
-                ]}
-              >
-                {tab.icon}
-              </Text>
-              <Text
-                style={[
-                  styles.tabLabel,
-                  isActive && styles.tabLabelActive,
-                ]}
-              >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "home" && styles.tabActive]}
+          onPress={() => setActiveTab("home")}
+        >
+          <MaterialIcons
+            name="home"
+            size={22}
+            color={activeTab === "home" ? Colors.primary : Colors.onSurfaceVariant}
+          />
+          <Text style={[styles.tabLabel, activeTab === "home" && styles.tabLabelActive]}>
+            Home
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "book" && styles.tabActive]}
+          onPress={() => {
+            setActiveTab("book");
+            goToMejaPicking();
+          }}
+        >
+          <MaterialIcons
+            name="grid-view"
+            size={22}
+            color={activeTab === "book" ? Colors.primary : Colors.onSurfaceVariant}
+          />
+          <Text style={[styles.tabLabel, activeTab === "book" && styles.tabLabelActive]}>
+            Book
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "cafe" && styles.tabActive]}
+          onPress={() => {
+            setActiveTab("cafe");
+            goToCafeMenu();
+          }}
+        >
+          <MaterialIcons
+            name="local-cafe"
+            size={22}
+            color={activeTab === "cafe" ? Colors.primary : Colors.onSurfaceVariant}
+          />
+          <Text style={[styles.tabLabel, activeTab === "cafe" && styles.tabLabelActive]}>
+            Cafe
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -346,6 +346,27 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontFamily: "Montserrat",
     letterSpacing: -0.5,
+  },
+  headerRight: { flexDirection: "row", alignItems: "center", gap: 12 },
+  notifBtn: { position: "relative", padding: 4 },
+  notifDot: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.secondary,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   // Scroll
   scroll: { flex: 1 },
@@ -378,9 +399,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
-  promoOverlay: {
+  promoGradientOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(19,19,19,0.5)",
+    backgroundColor: "rgba(19,19,19,0.6)",
     zIndex: 1,
   },
   promoContent: {
@@ -433,7 +454,6 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.1)",
   },
   statHeader: { flexDirection: "row", alignItems: "center", gap: 6 },
-  statIcon: { fontSize: 16 },
   statLabel: {
     color: Colors.primary,
     fontSize: 12,
@@ -531,6 +551,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceContainer,
     justifyContent: "center",
     alignItems: "center",
+    gap: 8,
   },
   cafePlaceholderText: { color: Colors.onSurfaceVariant, fontSize: 13 },
   cafeCard: {
@@ -548,7 +569,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  cafeEmoji: { fontSize: 40 },
   cafeInfo: { padding: 8 },
   cafeName: { fontWeight: "bold", fontSize: 13, color: Colors.onSurface },
   cafeBottom: {
@@ -557,10 +577,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 4,
   },
-  cafePrice: {
-    color: Colors.onSurfaceVariant,
-    fontSize: 12,
-  },
+  cafePrice: { color: Colors.onSurfaceVariant, fontSize: 12 },
   addBtn: {
     width: 24,
     height: 24,
@@ -569,7 +586,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  addBtnText: { color: Colors.onSecondary, fontSize: 16, fontWeight: "bold", lineHeight: 20 },
   // Sessions
   sessionCard: {
     marginHorizontal: 16,
@@ -617,12 +633,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "uppercase",
   },
-  sessionTime: {
-    color: Colors.onSurfaceVariant,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  sessionArrow: { color: Colors.onSurfaceVariant, fontSize: 22 },
+  sessionTime: { color: Colors.onSurfaceVariant, fontSize: 12, marginTop: 2 },
   // Bottom Nav
   bottomNav: {
     position: "absolute",
@@ -643,22 +654,20 @@ const styles = StyleSheet.create({
   tab: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingVertical: 4,
     borderRadius: 20,
+    gap: 2,
   },
   tabActive: {
     backgroundColor: "rgba(74,222,128,0.15)",
   },
-  tabIcon: { fontSize: 20 },
-  tabIconActive: {},
   tabLabel: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: "500",
     letterSpacing: 0.02,
     color: Colors.onSurfaceVariant,
-    marginTop: 2,
   },
   tabLabelActive: { color: Colors.primary },
 });

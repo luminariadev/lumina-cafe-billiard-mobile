@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { getMejas, Meja } from "../lib/api";
 import { Colors } from "../lib/theme";
 
@@ -21,8 +22,8 @@ export default function GuestMejaPickingScreen({ navigation }: any) {
     <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.title}>Book a Table</Text>
         <Text style={styles.subtitle}>{available.length} meja tersedia</Text>
