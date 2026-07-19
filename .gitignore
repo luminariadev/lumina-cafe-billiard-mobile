@@ -30,6 +30,12 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# AI agent config files (never allowed as contributors)
+AGENTS.md
+CLAUDE.md
+CURSOR.md
+CLINE.md
+
 # local env files
 .env*.local
 
