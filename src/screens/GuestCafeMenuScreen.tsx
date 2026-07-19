@@ -10,7 +10,11 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
 
   useEffect(() => {
     getProducts()
-      .then((data) => setProducts(data.filter((p) => p.active)))
+      .then((data) => {
+        // Filter: hanya active DAN stock > 0
+        const available = (data || []).filter((p) => p.active && p.stock > 0);
+        setProducts(available);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -19,10 +23,13 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
     setCart((c) => ({ ...c, [id]: (c[id] || 0) + 1 }));
   };
 
+  // Price as number untuk avoid .toLocaleString() crash
+  const fmt = (n: number | string) => Number(n).toLocaleString("id-ID");
+
   const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
   const cartTotal = Object.entries(cart).reduce((sum, [id, qty]) => {
     const product = products.find((p) => p.id === Number(id));
-    return sum + (product ? product.price * qty : 0);
+    return sum + (product ? Number(product.price) * qty : 0);
   }, 0);
 
   return (
@@ -57,10 +64,10 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
                 activeOpacity={0.8}
               >
                 <Text style={styles.productEmoji}>
-                  {item.product_type === "makanan" ? "🍽️" : "☕"}
+                  {item.product_type === "minuman" ? "☕" : "🍽️"}
                 </Text>
                 <Text style={styles.productName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.productPrice}>Rp {item.price.toLocaleString()}</Text>
+                <Text style={styles.productPrice}>Rp {fmt(item.price)}</Text>
                 <Text style={[styles.stockText, item.stock <= 0 ? styles.stockOut : styles.stockOk]}>
                   {item.stock <= 0 ? "Habis" : `Sisa ${item.stock}`}
                 </Text>
@@ -84,7 +91,7 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
                 onPress={() => navigation.navigate("Cart", { products, cart })}
               >
                 <Text style={styles.cartBtnText}>
-                  🛒 {cartCount} item — Rp {cartTotal.toLocaleString()}
+                  🛒 {cartCount} item — Rp {fmt(cartTotal)}
                 </Text>
                 <Text style={styles.cartArrow}>→</Text>
               </TouchableOpacity>
