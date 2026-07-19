@@ -20,11 +20,7 @@ export default function GuestMejaPickingScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* Header */}
       <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
-        </TouchableOpacity>
         <Text style={styles.title}>Book a Table</Text>
         <Text style={styles.subtitle}>{available.length} meja tersedia</Text>
       </View>
@@ -47,6 +43,7 @@ export default function GuestMejaPickingScreen({ navigation }: any) {
               activeOpacity={0.8}
             >
               <View style={styles.mejaInner}>
+                <MaterialIcons name="sports-bar" size={40} color={Colors.primary} />
                 <Text style={styles.mejaNum}>{item.nomor_meja}</Text>
                 <Text style={styles.mejaLabel}>Meja Billiard</Text>
                 <Text style={styles.mejaPrice}>Rp 25.000 / jam</Text>
@@ -70,9 +67,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(61,74,62,0.1)",
+    marginBottom: 8,
   },
-  backBtn: { marginBottom: 12 },
-  backText: { color: Colors.primary, fontSize: 22 },
   title: {
     fontSize: 24,
     fontWeight: "600",
@@ -80,7 +76,7 @@ const styles = StyleSheet.create({
     color: Colors.onSurface,
   },
   subtitle: { color: Colors.onSurfaceVariant, fontSize: 14, marginTop: 4 },
-  grid: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 20 },
+  grid: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 20 },
   loadingBox: { flex: 1, justifyContent: "center", alignItems: "center" },
   mejaCard: {
     flex: 1,
@@ -99,6 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold",
     color: Colors.onSurface,
+    marginTop: 8,
   },
   mejaLabel: { color: Colors.onSurfaceVariant, fontSize: 12, marginTop: 4 },
   mejaPrice: {

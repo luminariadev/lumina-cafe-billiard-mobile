@@ -14,7 +14,7 @@ import { getProducts, Product } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
 
-export default function GuestCafeMenuScreen({ navigation }: any) {
+export default function GuestCafeMenuScreen({ navigation, route }: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<Record<number, number>>({});
@@ -39,17 +39,36 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
     return sum + (product ? Number(product.price) * qty : 0);
   }, 0);
 
+  const showBack = route?.params?.showBack ?? false;
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Brew Selection</Text>
-        <Text style={styles.subtitle}>
-          {loading ? "Memuat..." : `${products.length} menu tersedia`}
-        </Text>
+        <View style={styles.headerRow}>
+          {showBack && (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
+              <MaterialIcons name="arrow-back" size={22} color={Colors.primary} />
+            </TouchableOpacity>
+          )}
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>Brew Selection</Text>
+            <Text style={styles.subtitle}>
+              {loading ? "Memuat..." : `${products.length} menu tersedia`}
+            </Text>
+          </View>
+          {cartCount > 0 && (
+            <TouchableOpacity
+              style={styles.cartBtn}
+              onPress={() => navigation.navigate("Cart", { products, cart })}
+            >
+              <MaterialIcons name="shopping-cart" size={20} color={Colors.primary} />
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{cartCount}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {loading ? (
@@ -70,7 +89,7 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
                 onPress={() => addToCart(item.id)}
                 activeOpacity={0.8}
               >
-                <View style={styles.cafeImage}>
+                <View style={styles.productImage}>
                   {item.product_type === "minuman" ? (
                     <Ionicons name="cafe-outline" size={36} color={Colors.onSurfaceVariant} />
                   ) : (
@@ -91,11 +110,11 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
                     {item.stock <= 0 ? "Habis" : `Sisa ${item.stock}`}
                   </Text>
                 </View>
-                {cart[item.id] && (
+                {cart[item.id] ? (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>{cart[item.id]}</Text>
                   </View>
-                )}
+                ) : null}
               </TouchableOpacity>
             )}
             ListEmptyComponent={
@@ -106,13 +125,13 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
           {cartCount > 0 && (
             <View style={styles.cartBar}>
               <TouchableOpacity
-                style={styles.cartBtn}
+                style={styles.cartBarBtn}
                 onPress={() => navigation.navigate("Cart", { products, cart })}
               >
-                <Text style={styles.cartBtnText}>
-                  🛒 {cartCount} item — {formatCurrency(cartTotal)}
+                <Text style={styles.cartBarText}>
+                  {cartCount} item — {formatCurrency(cartTotal)}
                 </Text>
-                <Text style={styles.cartArrow}>→</Text>
+                <Text style={styles.cartBarArrow}>→</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -131,7 +150,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(61,74,62,0.1)",
   },
-  backText: { color: Colors.primary, fontSize: 22 },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     fontSize: 24,
     fontWeight: "600",
@@ -139,6 +161,24 @@ const styles = StyleSheet.create({
     color: Colors.onSurface,
   },
   subtitle: { color: Colors.onSurfaceVariant, fontSize: 14, marginTop: 4 },
+  cartBtn: {
+    padding: 8,
+    borderRadius: 16,
+    backgroundColor: "rgba(107,251,154,0.15)",
+    position: "relative",
+  },
+  cartBadge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: Colors.secondary,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cartBadgeText: { color: Colors.onSecondary, fontSize: 11, fontWeight: "bold" },
   grid: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 },
   loadingBox: { flex: 1, justifyContent: "center", alignItems: "center" },
   productCard: {
@@ -151,13 +191,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
   },
-  cafeImage: {
+  productImage: {
     height: 100,
     backgroundColor: Colors.surfaceContainer,
     justifyContent: "center",
     alignItems: "center",
   },
-  emoji: { fontSize: 36 },
   productInfo: { padding: 12 },
   productName: {
     color: Colors.onSurface,
@@ -187,13 +226,11 @@ const styles = StyleSheet.create({
   badgeText: { color: Colors.onSecondary, fontSize: 12, fontWeight: "bold" },
   cartBar: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 16,
-    paddingBottom: 24,
+    bottom: 80,
+    left: 16,
+    right: 16,
   },
-  cartBtn: {
+  cartBarBtn: {
     backgroundColor: Colors.primary,
     borderRadius: 12,
     padding: 16,
@@ -201,8 +238,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  cartBtnText: { color: Colors.onPrimary, fontSize: 16, fontWeight: "bold" },
-  cartArrow: { color: Colors.onPrimary, fontSize: 20, fontWeight: "bold" },
+  cartBarText: { color: Colors.onPrimary, fontSize: 16, fontWeight: "bold" },
+  cartBarArrow: { color: Colors.onPrimary, fontSize: 20, fontWeight: "bold" },
   emptyText: {
     color: Colors.onSurfaceVariant,
     textAlign: "center",

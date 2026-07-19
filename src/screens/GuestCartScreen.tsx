@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { cafeOrder } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
@@ -129,7 +130,7 @@ export default function GuestCartScreen({ route, navigation }: any) {
                   onPress={() => setPaymentMethod("qris")}
                 >
                   <Text style={[styles.paymentText, paymentMethod === "qris" && styles.paymentTextActive]}>
-                    📱 QRIS
+                    QRIS
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -137,7 +138,7 @@ export default function GuestCartScreen({ route, navigation }: any) {
                   onPress={() => setPaymentMethod("tunai")}
                 >
                   <Text style={[styles.paymentText, paymentMethod === "tunai" && styles.paymentTextActive]}>
-                    💵 Tunai
+                    Tunai
                   </Text>
                 </TouchableOpacity>
               </View>

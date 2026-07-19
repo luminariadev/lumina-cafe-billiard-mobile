@@ -58,9 +58,10 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
           <Text style={styles.successDetail}>{customerName}</Text>
           <TouchableOpacity
             style={styles.homeBtn}
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("MainTabs")}
           >
-            <Text style={styles.homeBtnText}>← Kembali ke Beranda</Text>
+            <MaterialIcons name="home" size={18} color={Colors.primary} />
+            <Text style={styles.homeBtnText}> Kembali ke Beranda</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -153,6 +154,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
             }
           }}
         >
+          <MaterialIcons name="payment" size={18} color={Colors.primary} />
           <Text style={styles.mockBtnText}> Simulasi Bayar</Text>
         </TouchableOpacity>
       </View>
@@ -162,7 +164,12 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
-  backBtn: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingTop: 16 },
+  backBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
   backText: { color: Colors.primary, fontSize: 18 },
   content: { flex: 1, padding: 16 },
   title: {
@@ -192,8 +199,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-  qrPlaceholder: { fontSize: 60 },
-  qrCode: { color: Colors.onSurfaceVariant, fontSize: 10, textAlign: "center", marginTop: 4 },
   qrHint: { color: Colors.onSurfaceVariant, fontSize: 12, textAlign: "center", lineHeight: 18 },
   detailBox: {
     backgroundColor: "rgba(30,30,30,0.8)",
@@ -222,6 +227,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: Colors.primary,
+    flexDirection: "row",
+    justifyContent: "center",
   },
   mockBtnText: { color: Colors.primary, fontSize: 16, fontWeight: "600" },
   // Success
@@ -231,18 +238,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 40,
   },
-  successIcon: { fontSize: 64, marginBottom: 16 },
   successTitle: { fontSize: 24, fontWeight: "bold", color: Colors.primary, marginBottom: 8 },
   successSub: { fontSize: 16, color: Colors.primary, fontWeight: "600", marginBottom: 8 },
   successDetail: { fontSize: 14, color: Colors.onSurfaceVariant, marginBottom: 4 },
   homeBtn: {
     marginTop: 32,
     backgroundColor: "rgba(30,30,30,0.8)",
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
+    flexDirection: "row",
+    alignItems: "center",
   },
   homeBtnText: { color: Colors.primary, fontSize: 16 },
 });

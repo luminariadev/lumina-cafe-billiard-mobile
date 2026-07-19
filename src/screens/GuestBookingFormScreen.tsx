@@ -64,6 +64,7 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
 
         {/* Meja info */}
         <View style={styles.mejaInfo}>
+          <MaterialIcons name="sports-bar" size={24} color={Colors.primary} />
           <Text style={styles.mejaLabel}>Meja</Text>
           <Text style={styles.mejaNum}>Table 0{meja.nomor_meja}</Text>
         </View>
@@ -139,13 +140,13 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
   backBtn: { paddingHorizontal: 16, paddingTop: 16 },
-  backText: { color: Colors.primary, fontSize: 22 },
   title: {
     fontSize: 24,
     fontWeight: "600",
     fontFamily: "Montserrat",
     color: Colors.onSurface,
     marginBottom: 20,
+    marginTop: 8,
   },
   mejaInfo: {
     backgroundColor: "rgba(30,30,30,0.8)",
