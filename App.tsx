@@ -1,5 +1,6 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -16,24 +17,26 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            cardStyle: { backgroundColor: "#0d2818" },
-          }}
-        >
-          <Stack.Screen name="Home" component={GuestHomeScreen} />
-          <Stack.Screen name="MejaPicking" component={GuestMejaPickingScreen} />
-          <Stack.Screen name="BookingForm" component={GuestBookingFormScreen} />
-          <Stack.Screen name="CafeMenu" component={GuestCafeMenuScreen} />
-          <Stack.Screen name="Cart" component={GuestCartScreen} />
-          <Stack.Screen name="Payment" component={GuestPaymentScreen} />
-          <Stack.Screen name="OrderStatus" component={GuestOrderStatusScreen} />
-        </Stack.Navigator>
-        <StatusBar style="light" />
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              cardStyle: { backgroundColor: "#0d2818" },
+            }}
+          >
+            <Stack.Screen name="Home" component={GuestHomeScreen} />
+            <Stack.Screen name="MejaPicking" component={GuestMejaPickingScreen} />
+            <Stack.Screen name="BookingForm" component={GuestBookingFormScreen} />
+            <Stack.Screen name="CafeMenu" component={GuestCafeMenuScreen} />
+            <Stack.Screen name="Cart" component={GuestCartScreen} />
+            <Stack.Screen name="Payment" component={GuestPaymentScreen} />
+            <Stack.Screen name="OrderStatus" component={GuestOrderStatusScreen} />
+          </Stack.Navigator>
+          <StatusBar style="light" />
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
