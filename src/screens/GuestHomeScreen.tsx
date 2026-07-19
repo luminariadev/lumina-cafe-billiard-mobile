@@ -13,7 +13,7 @@ import { getMejas, getProducts, Meja, Product } from "../lib/api";
 import { Colors, Fonts, Styles } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
 
-type BottomTab = "home" | "book" | "cafe" | "profile";
+type BottomTab = "home" | "book" | "cafe";
 
 export default function GuestHomeScreen({ navigation }: any) {
   const [mejas, setMejas] = useState<Meja[]>([]);
@@ -69,15 +69,6 @@ export default function GuestHomeScreen({ navigation }: any) {
       {/* ── STICKY HEADER ── */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Cue & Brew</Text>
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.notifBtn}>
-            <Text style={styles.notifIcon}>🔔</Text>
-            <View style={styles.notifDot} />
-          </TouchableOpacity>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>👤</Text>
-          </View>
-        </View>
       </View>
 
       <ScrollView
@@ -299,7 +290,6 @@ export default function GuestHomeScreen({ navigation }: any) {
             label: "Cafe",
             onPress: goToCafeMenu,
           },
-          { key: "profile", icon: "👤", label: "Profile", onPress: () => {} },
         ].map((tab) => {
           const isActive = activeTab === tab.key;
           return (
@@ -357,29 +347,6 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat",
     letterSpacing: -0.5,
   },
-  headerRight: { flexDirection: "row", alignItems: "center", gap: 12 },
-  notifBtn: { position: "relative", padding: 4 },
-  notifIcon: { fontSize: 20 },
-  notifDot: {
-    position: "absolute",
-    top: 2,
-    right: 2,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.secondary,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.surfaceContainerHigh,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: { fontSize: 20 },
   // Scroll
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
