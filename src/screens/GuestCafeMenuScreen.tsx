@@ -25,66 +25,72 @@ export default function GuestCafeMenuScreen({ navigation }: any) {
     return sum + (product ? product.price * qty : 0);
   }, 0);
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#c9a84c" />
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header selalu tampil */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 12 }}>
           <Text style={styles.backText}>← Kembali</Text>
         </TouchableOpacity>
         <Text style={styles.title}>☕ Cafe Menu</Text>
-        <Text style={styles.subtitle}>{products.length} menu tersedia</Text>
+        <Text style={styles.subtitle}>
+          {loading ? "Memuat menu..." : `${products.length} menu tersedia`}
+        </Text>
       </View>
 
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        contentContainerStyle={styles.grid}
-        columnWrapperStyle={{ gap: 10 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.productCard}
-            onPress={() => addToCart(item.id)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.productEmoji}>
-              {item.product_type === "makanan" ? "🍽️" : "☕"}
-            </Text>
-            <Text style={styles.productName} numberOfLines={1}>{item.name}</Text>
-            <Text style={styles.productPrice}>Rp {item.price.toLocaleString()}</Text>
-            <Text style={[styles.stockText, item.stock <= 0 ? styles.stockOut : styles.stockOk]}>
-              {item.stock <= 0 ? "Habis" : `Sisa ${item.stock}`}
-            </Text>
-            {cart[item.id] && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{cart[item.id]}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        )}
-      />
-
-      {/* Cart bar */}
-      {cartCount > 0 && (
-        <View style={styles.cartBar}>
-          <TouchableOpacity
-            style={styles.cartBtn}
-            onPress={() => navigation.navigate("Cart", { products, cart })}
-          >
-            <Text style={styles.cartBtnText}>
-              🛒 {cartCount} item — Rp {cartTotal.toLocaleString()}
-            </Text>
-            <Text style={styles.cartArrow}>→</Text>
-          </TouchableOpacity>
+      {loading ? (
+        <View style={styles.loadingBox}>
+          <ActivityIndicator size="large" color="#c9a84c" />
         </View>
+      ) : (
+        <>
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            contentContainerStyle={styles.grid}
+            columnWrapperStyle={{ gap: 10 }}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.productCard}
+                onPress={() => addToCart(item.id)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.productEmoji}>
+                  {item.product_type === "makanan" ? "🍽️" : "☕"}
+                </Text>
+                <Text style={styles.productName} numberOfLines={1}>{item.name}</Text>
+                <Text style={styles.productPrice}>Rp {item.price.toLocaleString()}</Text>
+                <Text style={[styles.stockText, item.stock <= 0 ? styles.stockOut : styles.stockOk]}>
+                  {item.stock <= 0 ? "Habis" : `Sisa ${item.stock}`}
+                </Text>
+                {cart[item.id] && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{cart[item.id]}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>Belum ada menu tersedia</Text>
+            }
+          />
+
+          {/* Cart bar */}
+          {cartCount > 0 && (
+            <View style={styles.cartBar}>
+              <TouchableOpacity
+                style={styles.cartBtn}
+                onPress={() => navigation.navigate("Cart", { products, cart })}
+              >
+                <Text style={styles.cartBtnText}>
+                  🛒 {cartCount} item — Rp {cartTotal.toLocaleString()}
+                </Text>
+                <Text style={styles.cartArrow}>→</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
       )}
     </SafeAreaView>
   );
@@ -97,6 +103,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: "bold", color: "#fff" },
   subtitle: { color: "#9ca3af", fontSize: 14, marginTop: 4 },
   grid: { paddingHorizontal: 20, paddingBottom: 100 },
+  loadingBox: { flex: 1, justifyContent: "center", alignItems: "center" },
   productCard: {
     flex: 1,
     backgroundColor: "#143d28",
@@ -144,4 +151,5 @@ const styles = StyleSheet.create({
   },
   cartBtnText: { color: "#0d2818", fontSize: 16, fontWeight: "bold" },
   cartArrow: { color: "#0d2818", fontSize: 20, fontWeight: "bold" },
+  emptyText: { color: "#6b7280", textAlign: "center", marginTop: 60, fontSize: 16 },
 });
