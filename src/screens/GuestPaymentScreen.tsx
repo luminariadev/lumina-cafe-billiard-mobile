@@ -2,18 +2,21 @@ import React, { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getPaymentStatus } from "../lib/api";
+import { Colors } from "../lib/theme";
+import { formatCurrency } from "../lib/format";
+
+const API_BASE = process.env.EXPO_PUBLIC_API_URL || "http://192.168.101.5:3000/api/v1";
 
 export default function GuestPaymentScreen({ route, navigation }: any) {
   const { transaksi, type, meja, durasi, customerName } = route.params;
   const [status, setStatus] = useState(transaksi.status);
-  const [countdown, setCountdown] = useState(300); // 5 menit
+  const [countdown, setCountdown] = useState(300);
   const interval = useRef<any>(null);
   const pollInterval = useRef<any>(null);
 
-  // Countdown timer
   useEffect(() => {
     interval.current = setInterval(() => {
-      setCountdown((c) => {
+      setCountdown((c: number) => {
         if (c <= 0) {
           clearInterval(interval.current);
           return 0;
@@ -24,7 +27,6 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
     return () => clearInterval(interval.current);
   }, []);
 
-  // Poll payment status
   useEffect(() => {
     pollInterval.current = setInterval(async () => {
       try {
@@ -42,18 +44,15 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
   const mins = Math.floor(countdown / 60);
   const secs = countdown % 60;
 
-  const formatCurrency = (n: number | string) =>
-    `Rp ${Number(n).toLocaleString()}`;
-
   if (status === "dibayar") {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.successBox}>
           <Text style={styles.successIcon}>✅</Text>
           <Text style={styles.successTitle}>Pembayaran Berhasil!</Text>
           <Text style={styles.successSub}>{transaksi.kode_transaksi}</Text>
           {type === "billiard" && (
-            <Text style={styles.successDetail}>Meja {meja} — {durasi} jam</Text>
+            <Text style={styles.successDetail}>Table {meja} — {durasi} jam</Text>
           )}
           <Text style={styles.successDetail}>{customerName}</Text>
           <TouchableOpacity
@@ -68,15 +67,15 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")} style={{ marginBottom: 16 }}>
-          <Text style={styles.backText}>← Batal & Kembali</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <TouchableOpacity onPress={() => navigation.navigate("Home")} style={styles.backBtn}>
+        <Text style={styles.backText}>← Batal</Text>
+      </TouchableOpacity>
 
+      <View style={styles.content}>
         <Text style={styles.title}>Pembayaran</Text>
 
-        {/* QRIS Display */}
+        {/* QRIS */}
         <View style={styles.qrBox}>
           <Text style={styles.qrLabel}>Scan QRIS untuk bayar</Text>
           <View style={styles.qrFrame}>
@@ -88,7 +87,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
           </Text>
         </View>
 
-        {/* Transaction Details */}
+        {/* Detail */}
         <View style={styles.detailBox}>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Kode</Text>
@@ -97,7 +96,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
           {type === "billiard" && (
             <>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Meja</Text>
+                <Text style={styles.detailLabel}>Table</Text>
                 <Text style={styles.detailValue}>{meja}</Text>
               </View>
               <View style={styles.detailRow}>
@@ -111,10 +110,10 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
             <Text style={styles.detailValue}>{customerName}</Text>
           </View>
           <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
-            <Text style={[styles.detailLabel, { fontSize: 18, color: "#c9a84c" }]}>
+            <Text style={[styles.detailLabel, { fontSize: 18, color: Colors.primary }]}>
               Total
             </Text>
-            <Text style={[styles.detailValue, { fontSize: 20, color: "#c9a84c", fontWeight: "bold" }]}>
+            <Text style={[styles.detailValue, { fontSize: 20, color: Colors.primary, fontWeight: "bold" }]}>
               {formatCurrency(transaksi.total_amount)}
             </Text>
           </View>
@@ -133,16 +132,15 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
           </Text>
         </View>
 
-        {/* Simulate button */}
+        {/* Simulate payment */}
         <TouchableOpacity
           style={styles.mockBtn}
           onPress={async () => {
             try {
               const res = await (
-                await fetch(
-                  `http://192.168.1.105:3000/api/v1/guest_transactions/${transaksi.id}/pay`,
-                  { method: "POST" }
-                )
+                await fetch(`${API_BASE}/guest_transactions/${transaksi.id}/pay`, {
+                  method: "POST",
+                })
               ).json();
               if (res.status === "dibayar") {
                 setStatus("dibayar");
@@ -154,7 +152,7 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
             }
           }}
         >
-          <Text style={styles.mockBtnText}>💰 Simulasi Bayar (testing)</Text>
+          <Text style={styles.mockBtnText}>💰 Simulasi Bayar</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -162,20 +160,28 @@ export default function GuestPaymentScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d2818" },
-  content: { flex: 1, padding: 20 },
-  backText: { color: "#c9a84c", fontSize: 16 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#fff", marginBottom: 20 },
+  container: { flex: 1, backgroundColor: Colors.surface },
+  backBtn: { paddingHorizontal: 16, paddingTop: 16 },
+  backText: { color: Colors.primary, fontSize: 18 },
+  content: { flex: 1, padding: 16 },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    fontFamily: "Montserrat",
+    color: Colors.onSurface,
+    marginBottom: 20,
+    marginTop: 8,
+  },
   qrBox: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 16,
     padding: 24,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 20,
   },
-  qrLabel: { color: "#9ca3af", fontSize: 14, marginBottom: 16 },
+  qrLabel: { color: Colors.onSurfaceVariant, fontSize: 14, marginBottom: 16 },
   qrFrame: {
     width: 180,
     height: 180,
@@ -186,14 +192,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   qrPlaceholder: { fontSize: 60 },
-  qrCode: { color: "#6b7280", fontSize: 10, textAlign: "center", marginTop: 4 },
-  qrHint: { color: "#6b7280", fontSize: 12, textAlign: "center", lineHeight: 18 },
+  qrCode: { color: Colors.onSurfaceVariant, fontSize: 10, textAlign: "center", marginTop: 4 },
+  qrHint: { color: Colors.onSurfaceVariant, fontSize: 12, textAlign: "center", lineHeight: 18 },
   detailBox: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 20,
   },
   detailRow: {
@@ -201,26 +207,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#1a4d33",
+    borderBottomColor: "rgba(255,255,255,0.05)",
   },
-  detailLabel: { color: "#9ca3af", fontSize: 14 },
-  detailValue: { color: "#fff", fontSize: 14, fontWeight: "600" },
-  countdownBox: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  countdownLabel: { color: "#9ca3af", fontSize: 14, marginBottom: 8 },
-  countdownValue: { fontSize: 40, fontWeight: "bold", color: "#c9a84c" },
+  detailLabel: { color: Colors.onSurfaceVariant, fontSize: 14 },
+  detailValue: { color: Colors.onSurface, fontSize: 14, fontWeight: "600" },
+  countdownBox: { alignItems: "center", marginBottom: 24 },
+  countdownLabel: { color: Colors.onSurfaceVariant, fontSize: 14, marginBottom: 8 },
+  countdownValue: { fontSize: 40, fontWeight: "bold", color: Colors.primary },
   mockBtn: {
-    backgroundColor: "#1a4d33",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#c9a84c",
+    borderColor: Colors.primary,
   },
-  mockBtnText: { color: "#c9a84c", fontSize: 16, fontWeight: "600" },
-  // -- Success state --
+  mockBtnText: { color: Colors.primary, fontSize: 16, fontWeight: "600" },
+  // Success
   successBox: {
     flex: 1,
     justifyContent: "center",
@@ -228,17 +231,17 @@ const styles = StyleSheet.create({
     padding: 40,
   },
   successIcon: { fontSize: 64, marginBottom: 16 },
-  successTitle: { fontSize: 24, fontWeight: "bold", color: "#22c55e", marginBottom: 8 },
-  successSub: { fontSize: 16, color: "#c9a84c", fontWeight: "600", marginBottom: 8 },
-  successDetail: { fontSize: 14, color: "#9ca3af", marginBottom: 4 },
+  successTitle: { fontSize: 24, fontWeight: "bold", color: Colors.primary, marginBottom: 8 },
+  successSub: { fontSize: 16, color: Colors.primary, fontWeight: "600", marginBottom: 8 },
+  successDetail: { fontSize: 14, color: Colors.onSurfaceVariant, marginBottom: 4 },
   homeBtn: {
     marginTop: 32,
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  homeBtnText: { color: "#c9a84c", fontSize: 16 },
+  homeBtnText: { color: Colors.primary, fontSize: 16 },
 });

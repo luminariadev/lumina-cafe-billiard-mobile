@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 import {
-  View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet, Alert, ActivityIndicator,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { cafeOrder } from "../lib/api";
+import { Colors } from "../lib/theme";
+import { formatCurrency } from "../lib/format";
 
 export default function GuestCartScreen({ route, navigation }: any) {
   const { products, cart } = route.params;
@@ -15,7 +24,9 @@ export default function GuestCartScreen({ route, navigation }: any) {
   const cartItems = Object.entries(cart as Record<string, number>)
     .map(([id, qty]) => {
       const product = (products as any[]).find((p: any) => p.id === Number(id));
-      return product ? { productId: product.id, name: product.name, price: product.price, qty } : null;
+      return product
+        ? { productId: product.id, name: product.name, price: Number(product.price), qty }
+        : null;
     })
     .filter(Boolean);
 
@@ -57,12 +68,13 @@ export default function GuestCartScreen({ route, navigation }: any) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 12 }}>
-          <Text style={styles.backText}>← Kembali</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 8 }}>
+          <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title}>🛒 Keranjang</Text>
+        <Text style={styles.subtitle}>{cartItems.length} item</Text>
       </View>
 
       <FlatList
@@ -73,36 +85,41 @@ export default function GuestCartScreen({ route, navigation }: any) {
           <View style={styles.cartItem}>
             <View style={styles.cartInfo}>
               <Text style={styles.cartName}>{item.name}</Text>
-              <Text style={styles.cartPrice}>Rp {item.price.toLocaleString()} × {item.qty}</Text>
+              <Text style={styles.cartPrice}>
+                {formatCurrency(item.price)} × {item.qty}
+              </Text>
             </View>
             <Text style={styles.cartSubtotal}>
-              Rp {(item.price * item.qty).toLocaleString()}
+              {formatCurrency(item.price * item.qty)}
             </Text>
           </View>
         )}
         ListFooterComponent={
           <>
+            {/* Nama */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Nama Lengkap</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Masukkan nama..."
-                placeholderTextColor="#6b7280"
+                placeholderTextColor={Colors.onSurfaceVariant}
                 value={name}
                 onChangeText={setName}
               />
             </View>
+            {/* Phone */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>No. HP</Text>
               <TextInput
                 style={styles.input}
                 placeholder="08123456789"
-                placeholderTextColor="#6b7280"
+                placeholderTextColor={Colors.onSurfaceVariant}
                 value={phone}
                 onChangeText={setPhone}
                 keyboardType="phone-pad"
               />
             </View>
+            {/* Payment Method */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Metode Bayar</Text>
               <View style={styles.paymentRow}>
@@ -124,17 +141,19 @@ export default function GuestCartScreen({ route, navigation }: any) {
                 </TouchableOpacity>
               </View>
             </View>
+            {/* Total */}
             <View style={styles.totalBox}>
               <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalValue}>Rp {total.toLocaleString()}</Text>
+              <Text style={styles.totalValue}>{formatCurrency(total)}</Text>
             </View>
+            {/* Order */}
             <TouchableOpacity
               style={[styles.orderBtn, loading && { opacity: 0.6 }]}
               onPress={handleOrder}
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator color="#0d2818" />
+                <ActivityIndicator color={Colors.onPrimary} />
               ) : (
                 <Text style={styles.orderBtnText}>
                   {paymentMethod === "qris" ? "Bayar via QRIS" : "Pesan (Bayar di Kasir)"}
@@ -149,51 +168,68 @@ export default function GuestCartScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d2818" },
-  header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 },
-  backText: { color: "#c9a84c", fontSize: 16 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#fff" },
-  list: { padding: 20, paddingBottom: 40 },
+  container: { flex: 1, backgroundColor: Colors.surface },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(61,74,62,0.1)",
+  },
+  backText: { color: Colors.primary, fontSize: 22 },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    fontFamily: "Montserrat",
+    color: Colors.onSurface,
+  },
+  subtitle: { color: Colors.onSurfaceVariant, fontSize: 14, marginTop: 4 },
+  list: { padding: 16, paddingBottom: 40 },
   cartItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
   cartInfo: { flex: 1 },
-  cartName: { color: "#fff", fontSize: 15, fontWeight: "600" },
-  cartPrice: { color: "#9ca3af", fontSize: 13, marginTop: 2 },
-  cartSubtotal: { color: "#c9a84c", fontSize: 15, fontWeight: "bold" },
+  cartName: { color: Colors.onSurface, fontSize: 15, fontWeight: "600" },
+  cartPrice: { color: Colors.onSurfaceVariant, fontSize: 13, marginTop: 2 },
+  cartSubtotal: { color: Colors.primary, fontSize: 15, fontWeight: "bold" },
   formGroup: { marginTop: 20 },
-  label: { color: "#9ca3af", fontSize: 14, marginBottom: 8, fontWeight: "600" },
+  label: {
+    color: Colors.onSurfaceVariant,
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: "600",
+  },
   input: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
-    color: "#fff",
+    color: Colors.onSurface,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
   paymentRow: { flexDirection: "row", gap: 8 },
   paymentBtn: {
     flex: 1,
     paddingVertical: 14,
     borderRadius: 10,
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  paymentActive: { backgroundColor: "#c9a84c", borderColor: "#c9a84c" },
-  paymentText: { color: "#6b7280", fontSize: 14, fontWeight: "600" },
-  paymentTextActive: { color: "#0d2818" },
+  paymentActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  paymentText: { color: Colors.onSurfaceVariant, fontSize: 14, fontWeight: "600" },
+  paymentTextActive: { color: Colors.onPrimary },
   totalBox: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
     flexDirection: "row",
@@ -201,16 +237,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  totalLabel: { color: "#9ca3af", fontSize: 18 },
-  totalValue: { color: "#c9a84c", fontSize: 24, fontWeight: "bold" },
+  totalLabel: { color: Colors.onSurfaceVariant, fontSize: 18 },
+  totalValue: { color: Colors.primary, fontSize: 24, fontWeight: "bold" },
   orderBtn: {
-    backgroundColor: "#c9a84c",
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     padding: 18,
     alignItems: "center",
     marginTop: 20,
   },
-  orderBtnText: { color: "#0d2818", fontSize: 18, fontWeight: "bold" },
+  orderBtnText: { color: Colors.onPrimary, fontSize: 18, fontWeight: "bold" },
 });

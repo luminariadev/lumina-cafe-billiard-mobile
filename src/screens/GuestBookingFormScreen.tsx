@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { billiardBooking } from "../lib/api";
+import { Colors } from "../lib/theme";
+import { formatCurrency } from "../lib/format";
 
 const DURASI_OPTIONS = [1, 2, 3, 4, 5];
 const PRICE_PER_HOUR = 25000;
@@ -45,42 +54,45 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 16 }}>
-          <Text style={styles.backText}>← Kembali</Text>
-        </TouchableOpacity>
-
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+        <Text style={styles.backText}>←</Text>
+      </TouchableOpacity>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
         <Text style={styles.title}>Booking Billiard</Text>
 
+        {/* Meja info */}
         <View style={styles.mejaInfo}>
           <Text style={styles.mejaLabel}>Meja</Text>
-          <Text style={styles.mejaNum}>Meja {meja.nomor_meja}</Text>
+          <Text style={styles.mejaNum}>Table 0{meja.nomor_meja}</Text>
         </View>
 
+        {/* Nama */}
         <View style={styles.formGroup}>
           <Text style={styles.label}>Nama Lengkap</Text>
           <TextInput
             style={styles.input}
             placeholder="Masukkan nama..."
-            placeholderTextColor="#6b7280"
+            placeholderTextColor={Colors.onSurfaceVariant}
             value={name}
             onChangeText={setName}
           />
         </View>
 
+        {/* Phone */}
         <View style={styles.formGroup}>
           <Text style={styles.label}>No. HP</Text>
           <TextInput
             style={styles.input}
             placeholder="08123456789"
-            placeholderTextColor="#6b7280"
+            placeholderTextColor={Colors.onSurfaceVariant}
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
           />
         </View>
 
+        {/* Durasi */}
         <View style={styles.formGroup}>
           <Text style={styles.label}>Durasi</Text>
           <View style={styles.durasiRow}>
@@ -90,7 +102,9 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
                 style={[styles.durasiBtn, durasi === h && styles.durasiActive]}
                 onPress={() => setDurasi(h)}
               >
-                <Text style={[styles.durasiText, durasi === h && styles.durasiTextActive]}>
+                <Text
+                  style={[styles.durasiText, durasi === h && styles.durasiTextActive]}
+                >
                   {h} Jam
                 </Text>
               </TouchableOpacity>
@@ -98,20 +112,22 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
           </View>
         </View>
 
+        {/* Total */}
         <View style={styles.totalBox}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>Rp {total.toLocaleString()}</Text>
+          <Text style={styles.totalValue}>{formatCurrency(total)}</Text>
         </View>
 
+        {/* Confirm */}
         <TouchableOpacity
           style={[styles.payBtn, loading && { opacity: 0.6 }]}
           onPress={handleBooking}
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color="#0d2818" />
+            <ActivityIndicator color={Colors.onPrimary} />
           ) : (
-            <Text style={styles.payBtnText}>Bayar Sekarang</Text>
+            <Text style={styles.payBtnText}>Confirm Booking</Text>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -120,48 +136,63 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d2818" },
-  backText: { color: "#c9a84c", fontSize: 16 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#fff", marginBottom: 20 },
+  container: { flex: 1, backgroundColor: Colors.surface },
+  backBtn: { paddingHorizontal: 16, paddingTop: 16 },
+  backText: { color: Colors.primary, fontSize: 22 },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    fontFamily: "Montserrat",
+    color: Colors.onSurface,
+    marginBottom: 20,
+  },
   mejaInfo: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  mejaLabel: { color: "#9ca3af", fontSize: 14 },
-  mejaNum: { color: "#c9a84c", fontSize: 20, fontWeight: "bold" },
+  mejaLabel: { color: Colors.onSurfaceVariant, fontSize: 14 },
+  mejaNum: { color: Colors.primary, fontSize: 20, fontWeight: "bold" },
   formGroup: { marginBottom: 20 },
-  label: { color: "#9ca3af", fontSize: 14, marginBottom: 8, fontWeight: "600" },
+  label: {
+    color: Colors.onSurfaceVariant,
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: "600",
+  },
   input: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
-    color: "#fff",
+    color: Colors.onSurface,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
   durasiRow: { flexDirection: "row", gap: 8 },
   durasiBtn: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  durasiActive: { backgroundColor: "#c9a84c", borderColor: "#c9a84c" },
-  durasiText: { color: "#6b7280", fontSize: 14, fontWeight: "600" },
-  durasiTextActive: { color: "#0d2818" },
+  durasiActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  durasiText: { color: Colors.onSurfaceVariant, fontSize: 14, fontWeight: "600" },
+  durasiTextActive: { color: Colors.onPrimary },
   totalBox: {
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     borderRadius: 12,
     padding: 16,
     flexDirection: "row",
@@ -169,15 +200,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  totalLabel: { color: "#9ca3af", fontSize: 16 },
-  totalValue: { color: "#c9a84c", fontSize: 24, fontWeight: "bold" },
+  totalLabel: { color: Colors.onSurfaceVariant, fontSize: 18 },
+  totalValue: { color: Colors.primary, fontSize: 24, fontWeight: "bold" },
   payBtn: {
-    backgroundColor: "#c9a84c",
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     padding: 18,
     alignItems: "center",
   },
-  payBtnText: { color: "#0d2818", fontSize: 18, fontWeight: "bold" },
+  payBtnText: { color: Colors.onPrimary, fontSize: 18, fontWeight: "bold" },
 });

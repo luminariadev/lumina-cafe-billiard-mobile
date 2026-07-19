@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getPaymentStatus } from "../lib/api";
+import { Colors } from "../lib/theme";
 
 export default function GuestOrderStatusScreen({ route, navigation }: any) {
   const { transaksiId } = route.params;
@@ -29,7 +30,7 @@ export default function GuestOrderStatusScreen({ route, navigation }: any) {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#c9a84c" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </SafeAreaView>
     );
   }
@@ -48,7 +49,6 @@ export default function GuestOrderStatusScreen({ route, navigation }: any) {
             : "Menunggu Pembayaran"}
         </Text>
         <Text style={styles.sub}>Kode: {transaksiId}</Text>
-
         <TouchableOpacity style={styles.homeBtn} onPress={() => navigation.navigate("Home")}>
           <Text style={styles.homeBtnText}>← Kembali ke Beranda</Text>
         </TouchableOpacity>
@@ -58,19 +58,19 @@ export default function GuestOrderStatusScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d2818" },
+  container: { flex: 1, backgroundColor: Colors.surface },
   content: { flex: 1, justifyContent: "center", alignItems: "center", padding: 40 },
   icon: { fontSize: 64, marginBottom: 16 },
-  title: { fontSize: 22, fontWeight: "bold", color: "#fff", textAlign: "center" },
-  sub: { color: "#9ca3af", fontSize: 16, marginTop: 8 },
+  title: { fontSize: 22, fontWeight: "bold", color: Colors.onSurface, textAlign: "center" },
+  sub: { color: Colors.onSurfaceVariant, fontSize: 16, marginTop: 8 },
   homeBtn: {
     marginTop: 40,
-    backgroundColor: "#143d28",
+    backgroundColor: "rgba(30,30,30,0.8)",
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#1a4d33",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  homeBtnText: { color: "#c9a84c", fontSize: 16 },
+  homeBtnText: { color: Colors.primary, fontSize: 16 },
 });
