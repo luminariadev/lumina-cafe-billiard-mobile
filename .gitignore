@@ -35,6 +35,8 @@ AGENTS.md
 CLAUDE.md
 CURSOR.md
 CLINE.md
+*.cursorrules
+.claude/
 
 # local env files
 .env*.local
