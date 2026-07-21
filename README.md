@@ -1,5 +1,8 @@
 # Lumina Cafe Billiard — Mobile App
 
+[![CI](https://github.com/luminariadev/lumina-cafe-billiard-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/luminariadev/lumina-cafe-billiard-mobile/actions)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits)](https://conventionalcommits.org)
+
 Expo app untuk pelanggan (guest-only flow). Booking meja billiard, pesan makanan/minuman cafe, dan bayar via QRIS — tanpa login.
 
 ---
