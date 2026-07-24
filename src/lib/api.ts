@@ -1,5 +1,25 @@
 const API_BASE = process.env.EXPO_PUBLIC_API_URL || "http://192.168.101.5:3000/api/v1";
 
+export interface AppConfig {
+  app_name: string;
+  version: string;
+  billiard: {
+    price_per_hour: number;
+    currency: string;
+    min_duration_hour: number;
+    max_duration_hour: number;
+  };
+  operating_hours: {
+    open: string;
+    close: string;
+    timezone: string;
+  };
+  payment: {
+    methods: string[];
+    qris_expiry_minutes: number;
+  };
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -73,3 +93,7 @@ export const cafeOrder = (data: {
 
 export const getPaymentStatus = (id: number) =>
   request<GuestTransaksi>(`/guest_transactions/${id}/status`);
+
+export const getAppConfig = () =>
+  request<AppConfig>("/configs");
+

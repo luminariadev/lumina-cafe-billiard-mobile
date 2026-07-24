@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getMejas, getProducts, Meja, Product } from "../lib/api";
+import { getMejas, getProducts, getAppConfig, Meja, Product } from "../lib/api";
 import { Colors, Fonts, Styles } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
 
@@ -19,15 +19,18 @@ export default function GuestHomeScreen({ navigation }: any) {
   const [mejas, setMejas] = useState<Meja[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pricePerHour, setPricePerHour] = useState(25000);
 
   useEffect(() => {
     Promise.all([
       getMejas().catch(() => [] as Meja[]),
       getProducts().catch(() => [] as Product[]),
+      getAppConfig().catch(() => null),
     ])
-      .then(([m, p]) => {
+      .then(([m, p, cfg]) => {
         setMejas(m || []);
         setProducts((p || []).filter((x) => x.active && x.stock > 0));
+        if (cfg) setPricePerHour(cfg.billiard.price_per_hour);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -164,8 +167,8 @@ export default function GuestHomeScreen({ navigation }: any) {
             })}
           </View>
           <View style={styles.bookingActions}>
-            <Text style={styles.priceLabel}>Rp 25.000 / jam</Text>
-            <TouchableOpacity style={styles.confirmBtn} onPress={goToBookTab}>
+                      <Text style={styles.priceLabel}>Rp {pricePerHour.toLocaleString("id-ID")} / jam</Text>
+                      <TouchableOpacity style={styles.confirmBtn} onPress={goToBookTab}>
               <Text style={styles.confirmBtnText}>Confirm Booking</Text>
             </TouchableOpacity>
           </View>
