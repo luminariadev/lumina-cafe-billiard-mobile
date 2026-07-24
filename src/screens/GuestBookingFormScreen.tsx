@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,12 +11,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { billiardBooking } from "../lib/api";
+import { billiardBooking, getAppConfig } from "../lib/api";
 import { Colors } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
 
 const DURASI_OPTIONS = [1, 2, 3, 4, 5];
-const PRICE_PER_HOUR = 25000;
+const DEFAULT_PRICE_PER_HOUR = 25000;
 
 export default function GuestBookingFormScreen({ route, navigation }: any) {
   const { meja } = route.params;
@@ -24,19 +24,38 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
   const [phone, setPhone] = useState("");
   const [durasi, setDurasi] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [pricePerHour, setPricePerHour] = useState(DEFAULT_PRICE_PER_HOUR);
+  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
 
-  const total = durasi * PRICE_PER_HOUR;
+  useEffect(() => {
+    getAppConfig()
+      .then((cfg) => setPricePerHour(cfg.billiard.price_per_hour))
+      .catch(() => {});
+  }, []);
+
+  const total = durasi * pricePerHour;
+
+  function validate(): boolean {
+    const newErrors: { name?: string; phone?: string } = {};
+    if (!name.trim() || name.trim().length < 2) {
+      newErrors.name = "Nama minimal 2 karakter";
+    }
+    const phoneClean = phone.replace(/\s/g, "");
+    if (!phoneClean || phoneClean.length < 8 || phoneClean.length > 15) {
+      newErrors.phone = "No. HP harus 8-15 digit";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
 
   async function handleBooking() {
-    if (!name.trim() || !phone.trim()) {
-      Alert.alert("Lengkapi data", "Nama dan No. HP wajib diisi");
-      return;
-    }
+    if (!validate()) return;
+
     setLoading(true);
     try {
       const result = await billiardBooking({
         customer_name: name.trim(),
-        customer_phone: phone.trim(),
+        customer_phone: phone.replace(/\s/g, ""),
         nomor_meja: meja.nomor_meja,
         durasi_jam: durasi,
       });
@@ -73,25 +92,27 @@ export default function GuestBookingFormScreen({ route, navigation }: any) {
         <View style={styles.formGroup}>
           <Text style={styles.label}>Nama Lengkap</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Masukkan nama..."
             placeholderTextColor={Colors.onSurfaceVariant}
             value={name}
-            onChangeText={setName}
+            onChangeText={(v) => { setName(v); if (errors.name) setErrors({...errors, name: undefined}); }}
           />
+          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
         </View>
 
         {/* Phone */}
         <View style={styles.formGroup}>
           <Text style={styles.label}>No. HP</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.phone ? styles.inputError : null]}
             placeholder="08123456789"
             placeholderTextColor={Colors.onSurfaceVariant}
             value={phone}
-            onChangeText={setPhone}
+            onChangeText={(v) => { setPhone(v); if (errors.phone) setErrors({...errors, phone: undefined}); }}
             keyboardType="phone-pad"
           />
+          {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
         </View>
 
         {/* Durasi */}
@@ -176,6 +197,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
+  },
+  inputError: {
+    borderColor: "#ff4444",
+  },
+  errorText: {
+    color: "#ff4444",
+    fontSize: 12,
+    marginTop: 4,
   },
   durasiRow: { flexDirection: "row", gap: 8 },
   durasiBtn: {
