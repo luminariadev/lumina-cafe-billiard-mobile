@@ -39,6 +39,7 @@ export default function GuestHomeScreen({ navigation }: any) {
   const totalTables = mejas.length;
 
   const cafeItems = products.slice(0, 10);
+  const availableMenuItems = products.filter((p) => p.active && p.stock > 0).length;
 
   function goToBookingForm(meja: Meja) {
     navigation.navigate("BookingForm", { meja });
@@ -108,9 +109,9 @@ export default function GuestHomeScreen({ navigation }: any) {
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
               <Ionicons name="cafe-outline" size={18} color={Colors.secondary} />
-              <Text style={[styles.statLabel, { color: Colors.secondary }]}>Cafe Orders</Text>
+              <Text style={[styles.statLabel, { color: Colors.secondary }]}>Menu Items</Text>
             </View>
-            <Text style={styles.statValue}>~15 min</Text>
+            <Text style={styles.statValue}>{availableMenuItems}</Text>
           </View>
         </View>
 
@@ -222,46 +223,19 @@ export default function GuestHomeScreen({ navigation }: any) {
           ))}
         </ScrollView>
 
-        {/* ── MY SESSIONS ── */}
-        <Text style={[styles.sectionTitle, { paddingHorizontal: 16, marginTop: 24 }]}>
-          My Sessions
-        </Text>
-        <TouchableOpacity onPress={goToBookTab}>
-          <View style={[styles.sessionCard, { borderLeftColor: Colors.primary }]}>
-            <View style={styles.dateBox}>
-              <Text style={styles.dateDay}>14</Text>
-              <Text style={styles.dateMonth}>OCT</Text>
-            </View>
-            <View style={styles.sessionInfo}>
-              <View style={styles.sessionTop}>
-                <Text style={styles.sessionName}>Table 08 • Billiards</Text>
-                <View style={styles.sessionBadge}>
-                  <Text style={styles.sessionBadgeText}>Upcoming</Text>
-                </View>
-              </View>
-              <Text style={styles.sessionTime}>18:30 - 20:30 (2 Hours)</Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={22} color={Colors.onSurfaceVariant} />
+        {/* ── QUICK BOOK ── */}
+        <TouchableOpacity
+          style={[styles.bookNowCard, { borderLeftColor: Colors.primary }]}
+          onPress={goToBookTab}
+          activeOpacity={0.8}
+        >
+          <MaterialIcons name="sports-bar" size={28} color={Colors.primary} />
+          <View style={styles.bookNowInfo}>
+            <Text style={styles.bookNowTitle}>Ready to Play?</Text>
+            <Text style={styles.bookNowSub}>Book a billiard table or order from the cafe menu</Text>
           </View>
+          <MaterialIcons name="chevron-right" size={22} color={Colors.onSurfaceVariant} />
         </TouchableOpacity>
-        <View style={[styles.sessionCard, styles.sessionPast]}>
-          <View style={[styles.dateBox, styles.dateBoxPast]}>
-            <Text style={[styles.dateDay, { color: Colors.onSurfaceVariant }]}>10</Text>
-            <Text style={[styles.dateMonth, { color: Colors.onSurfaceVariant }]}>OCT</Text>
-          </View>
-          <View style={styles.sessionInfo}>
-            <View style={styles.sessionTop}>
-              <Text style={styles.sessionName}>Table 03 • Billiards</Text>
-              <View style={[styles.sessionBadge, styles.sessionBadgePast]}>
-                <Text style={[styles.sessionBadgeText, { color: Colors.onSurfaceVariant }]}>
-                  Completed
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.sessionTime}>19:00 - 21:00 (2 Hours)</Text>
-          </View>
-          <MaterialIcons name="history" size={22} color={Colors.onSurfaceVariant} />
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -508,9 +482,56 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   // Sessions
-  sessionCard: {
+  // sessionCard: {
+  //   marginHorizontal: 16,
+  //   marginTop: 12,
+  //   backgroundColor: Colors.glassBg,
+  //   borderRadius: 16,
+  //   padding: 16,
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   gap: 12,
+  //   borderLeftWidth: 4,
+  //   borderLeftColor: Colors.primary,
+  //   borderWidth: 1,
+  //   borderColor: "rgba(255,255,255,0.1)",
+  // },
+  // sessionPast: { opacity: 0.6, borderLeftColor: Colors.outlineVariant },
+  // dateBox: {
+  //   width: 56,
+  //   height: 56,
+  //   borderRadius: 12,
+  //   backgroundColor: "rgba(107,251,154,0.1)",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // dateBoxPast: { backgroundColor: Colors.surfaceContainerHigh },
+  // dateDay: { fontSize: 18, fontWeight: "bold", color: Colors.primary, lineHeight: 22 },
+  // dateMonth: { fontSize: 10, fontWeight: "bold", textTransform: "uppercase", color: Colors.primary },
+  // sessionInfo: { flex: 1 },
+  // sessionTop: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  // },
+  // sessionName: { fontWeight: "bold", fontSize: 14, color: Colors.onSurface },
+  // sessionBadge: {
+  //   backgroundColor: "rgba(107,251,154,0.1)",
+  //   paddingHorizontal: 8,
+  //   paddingVertical: 2,
+  //   borderRadius: 12,
+  // },
+  // sessionBadgePast: { backgroundColor: Colors.surfaceContainerHigh },
+  // sessionBadgeText: {
+  //   color: Colors.primary,
+  //   fontSize: 10,
+  //   fontWeight: "bold",
+  //   textTransform: "uppercase",
+  // },
+  // sessionTime: { color: Colors.onSurfaceVariant, fontSize: 12, marginTop: 2 },
+  bookNowCard: {
     marginHorizontal: 16,
-    marginTop: 12,
+    marginTop: 24,
     backgroundColor: Colors.glassBg,
     borderRadius: 16,
     padding: 16,
@@ -522,37 +543,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
-  sessionPast: { opacity: 0.6, borderLeftColor: Colors.outlineVariant },
-  dateBox: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    backgroundColor: "rgba(107,251,154,0.1)",
-    justifyContent: "center",
-    alignItems: "center",
+  bookNowInfo: {
+    flex: 1,
   },
-  dateBoxPast: { backgroundColor: Colors.surfaceContainerHigh },
-  dateDay: { fontSize: 18, fontWeight: "bold", color: Colors.primary, lineHeight: 22 },
-  dateMonth: { fontSize: 10, fontWeight: "bold", textTransform: "uppercase", color: Colors.primary },
-  sessionInfo: { flex: 1 },
-  sessionTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  sessionName: { fontWeight: "bold", fontSize: 14, color: Colors.onSurface },
-  sessionBadge: {
-    backgroundColor: "rgba(107,251,154,0.1)",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-  },
-  sessionBadgePast: { backgroundColor: Colors.surfaceContainerHigh },
-  sessionBadgeText: {
-    color: Colors.primary,
-    fontSize: 10,
+  bookNowTitle: {
     fontWeight: "bold",
-    textTransform: "uppercase",
+    fontSize: 16,
+    color: Colors.onSurface,
   },
-  sessionTime: { color: Colors.onSurfaceVariant, fontSize: 12, marginTop: 2 },
+  bookNowSub: {
+    color: Colors.onSurfaceVariant,
+    fontSize: 12,
+    marginTop: 2,
+  },
 });
