@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getMejas, getProducts, getAppConfig, Meja, Product } from "../lib/api";
+import { getMejas, getProducts, getAppConfig, getTodayReport, Meja, Product, ReportData } from "../lib/api";
 import { Colors, Fonts, Styles } from "../lib/theme";
 import { formatCurrency } from "../lib/format";
 
@@ -20,17 +20,20 @@ export default function GuestHomeScreen({ navigation }: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [pricePerHour, setPricePerHour] = useState(25000);
+  const [report, setReport] = useState<ReportData | null>(null);
 
   useEffect(() => {
     Promise.all([
       getMejas().catch(() => [] as Meja[]),
       getProducts().catch(() => [] as Product[]),
       getAppConfig().catch(() => null),
+      getTodayReport().catch(() => null),
     ])
-      .then(([m, p, cfg]) => {
+      .then(([m, p, cfg, rep]) => {
         setMejas(m || []);
         setProducts((p || []).filter((x) => x.active && x.stock > 0));
         if (cfg) setPricePerHour(cfg.billiard.price_per_hour);
+        setReport(rep);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -81,19 +84,22 @@ export default function GuestHomeScreen({ navigation }: any) {
           <Text style={styles.welcomeName}>Guest</Text>
         </View>
 
-        {/* ── PROMO BANNER ── */}
-        <View style={[styles.promoCard, Styles.electricGlow]}>
-          <View style={styles.promoGradientOverlay} />
-          <View style={styles.promoContent}>
-            <View style={styles.promoBadge}>
-              <Text style={styles.promoBadgeText}>Limited Offer</Text>
-            </View>
-            <Text style={styles.promoTitle}>
-              20% Off Billiards{"\n"}Before 4:00 PM
-            </Text>
-            <Text style={styles.promoSub}>Valid Mon - Thu • Book Now</Text>
-          </View>
-        </View>
+        {/* ── TODAY'S STATS ── */}
+                {report && (
+                  <View style={[styles.promoCard, Styles.electricGlow]}>
+                    <View style={styles.promoContent}>
+                      <View style={styles.promoBadge}>
+                        <Text style={styles.promoBadgeText}>Today</Text>
+                      </View>
+                      <Text style={styles.promoTitle}>
+                        {formatCurrency(report.total_all)}
+                      </Text>
+                      <Text style={styles.promoSub}>
+                        {report.count} transaksi • Billiard {formatCurrency(report.total_billiard)} • Cafe {formatCurrency(report.total_cafe)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
 
         {/* ── QUICK STATS ── */}
         <View style={styles.statsRow}>

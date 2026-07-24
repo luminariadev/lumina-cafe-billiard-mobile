@@ -1,5 +1,32 @@
 const API_BASE = process.env.EXPO_PUBLIC_API_URL || "http://192.168.101.5:3000/api/v1";
 
+export interface Meja {
+  id: number;
+  nomor_meja: number;
+  status: "tersedia" | "terpakai" | "maintenance";
+  keterangan: string;
+}
+
+export interface Product {
+  id: number;
+  category_id: number;
+  name: string;
+  price: number;
+  stock: number;
+  product_type: string;
+  category?: { id: number; name: string };
+}
+
+export interface GuestTransaksi {
+  id: number;
+  kode_transaksi: string;
+  total_amount: number;
+  qris_string: string;
+  qr_expires_at: string;
+  status: string;
+  items?: { name: string; qty: number; price: number; subtotal: number }[];
+}
+
 export interface AppConfig {
   app_name: string;
   version: string;
@@ -20,73 +47,36 @@ export interface AppConfig {
   };
 }
 
+export interface ReportData {
+  date: string;
+  total_billiard: number;
+  total_cafe: number;
+  total_all: number;
+  count: number;
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string>),
-  };
-  const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}${endpoint}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || "Request failed");
+    throw new Error(err.error || err.message || `HTTP ${res.status}`);
   }
   return res.json();
 }
 
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  category_id: number;
-  product_type: string;
-  active: boolean;
-}
-
-export interface Meja {
-  id: number;
-  nomor_meja: string;
-  status: string;
-  keterangan?: string;
-}
-
-export interface GuestTransaksi {
-  id: number;
-  kode_transaksi: string;
-  status: string;
-  total_amount: number;
-  customer_name?: string;
-  qris_string?: string;
-  qr_expires_at?: string;
-  items?: { name: string; qty: number; price: number; subtotal: number }[];
-}
-
-// ---- Guest (no-auth) endpoints ----
-
-export const getMejas = () =>
-  request<Meja[]>("/mejas");
-
-export const getProducts = () =>
-  request<Product[]>("/products");
+export const getMejas = () => request<{ data: Meja[]; meta: any }>("/mejas").then(r => r.data);
+export const getProducts = () => request<Product[]>("/products");
 
 export const billiardBooking = (data: {
   customer_name: string;
   customer_phone: string;
-  nomor_meja: string;
+  nomor_meja: number;
   durasi_jam: number;
 }) =>
   request<GuestTransaksi>("/guest_transactions/billiard", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-
-export const cafeOrder = (data: {
-  customer_name: string;
-  customer_phone: string;
-  items: Record<string, number>;
-  payment_method: string;
-}) =>
-  request<GuestTransaksi>("/guest_transactions/cafe", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -97,3 +87,5 @@ export const getPaymentStatus = (id: number) =>
 export const getAppConfig = () =>
   request<AppConfig>("/configs");
 
+export const getTodayReport = () =>
+  request<ReportData>(`/transaksis/report?date=${new Date().toISOString().split("T")[0]}`);
