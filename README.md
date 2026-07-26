@@ -49,6 +49,16 @@ adb reverse tcp:8081 tcp:8081
 
 ---
 
+## Fitur Utama
+
+- **Home Screen:** Menampilkan statistik harian (pendapatan, jumlah transaksi) dan ketersediaan meja secara real-time.
+- **Booking Billiard:** Memesan meja billiard dengan validasi nama dan nomor HP, mengambil harga per jam secara dinamis dari API.
+- **Cafe Order:** Memesan makanan/minuman dari menu cafe.
+- **Payment:** Proses pembayaran via QRIS mock dengan status polling.
+- **Guest History:** Melihat riwayat transaksi berdasarkan nomor HP.
+
+---
+
 ## Navigasi
 
 ```
@@ -56,8 +66,11 @@ RootStack (native-stack, slide_from_right)
 ├── MainTabs (bottom-tabs, fade)
 │   ├── Home  → GuestHomeScreen
 │   ├── Book  → GuestMejaPickingScreen
-│   └── Cafe  → GuestCafeMenuScreen
+│   ├── Cafe  → GuestCafeMenuScreen
+│   └── History → GuestHistoryScreen (NEW)
 ├── BookingForm → Form booking billiard
+├── Payment → Konfirmasi & status pembayaran
+└── TransactionStatus → Status transaksi (QRIS)
 ├── Cart        → Keranjang cafe checkout
 ├── Payment     → QRIS + countdown
 └── OrderStatus → Status pembayaran
