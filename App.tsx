@@ -14,6 +14,7 @@ import GuestPaymentScreen from "./src/screens/GuestPaymentScreen";
 import GuestCafeMenuScreen from "./src/screens/GuestCafeMenuScreen";
 import GuestCartScreen from "./src/screens/GuestCartScreen";
 import GuestOrderStatusScreen from "./src/screens/GuestOrderStatusScreen";
+import GuestHistoryScreen from "./src/screens/GuestHistoryScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -96,6 +97,16 @@ function MainTabs() {
             <MaterialIcons name="local-cafe" size={size} color={color} />
           ),
           tabBarLabel: "Cafe",
+        }}
+      />
+      <Tab.Screen
+        name="History"
+        component={GuestHistoryScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="history" size={size} color={color} />
+          ),
+          tabBarLabel: "History",
         }}
       />
     </Tab.Navigator>
