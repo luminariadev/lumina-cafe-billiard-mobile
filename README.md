@@ -189,3 +189,4 @@ export const Colors = {
 - Untuk menjalankan di perangkat fisik, pastikan perangkat dan laptop dalam 1 jaringan WiFi yang sama (atau gunakan `adb reverse` untuk emulator).
 2026-07-29 19:42
 # Last synced: 2026-07-30 17:41:02 WIB
+# Manual sync: 2026-07-30 17:45:19 WIB
