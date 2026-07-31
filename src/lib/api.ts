@@ -68,8 +68,14 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 }
 
 export const getMejas = () => request<{ data: Meja[]; meta: any }>("/mejas").then(r => r.data);
+
+/** Fetch all products (cafe & billiard menu items) */
 export const getProducts = () => request<Product[]>("/products");
 
+/**
+ * Create a billiard booking as a guest (no login required).
+ * @param data - customer name/phone, table number, and duration in hours
+ */
 export const billiardBooking = (data: {
   customer_name: string;
   customer_phone: string;
@@ -81,11 +87,14 @@ export const billiardBooking = (data: {
     body: JSON.stringify(data),
   });
 
+/** Poll QRIS payment status for a guest transaction */
 export const getPaymentStatus = (id: number) =>
   request<GuestTransaksi>(`/guest_transactions/${id}/status`);
 
+/** Fetch app-wide config (pricing, operating hours, payment methods) */
 export const getAppConfig = () =>
   request<AppConfig>("/configs");
 
+/** Fetch today's revenue report (billiard vs cafe totals) */
 export const getTodayReport = () =>
   request<ReportData>(`/transaksis/report?date=${new Date().toISOString().split("T")[0]}`);
