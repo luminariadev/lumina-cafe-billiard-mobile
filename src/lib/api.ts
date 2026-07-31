@@ -14,6 +14,7 @@ export interface Product {
   price: number;
   stock: number;
   product_type: string;
+  active: boolean;
   category?: { id: number; name: string };
 }
 
@@ -67,6 +68,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   return res.json();
 }
 
+/** Fetch all tables (billiard) */
 export const getMejas = () => request<{ data: Meja[]; meta: any }>("/mejas").then(r => r.data);
 
 /** Fetch all products (cafe & billiard menu items) */
@@ -90,6 +92,21 @@ export const billiardBooking = (data: {
 /** Poll QRIS payment status for a guest transaction */
 export const getPaymentStatus = (id: number) =>
   request<GuestTransaksi>(`/guest_transactions/${id}/status`);
+
+/**
+ * Create a cafe order as a guest (no login required).
+ * @param data - customer name/phone, items, and payment method
+ */
+export const cafeOrder = (data: {
+  customer_name: string;
+  customer_phone: string;
+  items: Record<string, number>;
+  payment_method: string;
+}) =>
+  request<GuestTransaksi>("/guest_transactions/cafe", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 
 /** Fetch app-wide config (pricing, operating hours, payment methods) */
 export const getAppConfig = () =>
