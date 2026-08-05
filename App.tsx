@@ -15,6 +15,7 @@ import GuestCafeMenuScreen from "./src/screens/GuestCafeMenuScreen";
 import GuestCartScreen from "./src/screens/GuestCartScreen";
 import GuestOrderStatusScreen from "./src/screens/GuestOrderStatusScreen";
 import GuestHistoryScreen from "./src/screens/GuestHistoryScreen";
+import OrderHistoryDetailScreen from "./src/screens/OrderHistoryDetailScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -129,6 +130,7 @@ export default function App() {
           <Stack.Screen name="Cart" component={GuestCartScreen} />
           <Stack.Screen name="Payment" component={GuestPaymentScreen} />
           <Stack.Screen name="OrderStatus" component={GuestOrderStatusScreen} />
+          <Stack.Screen name="OrderHistoryDetail" component={OrderHistoryDetailScreen} />
         </Stack.Navigator>
         <StatusBar style="light" />
       </NavigationContainer>
